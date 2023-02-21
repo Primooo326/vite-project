@@ -1,0 +1,41 @@
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.navbar {
+    width: 100%;
+    position: absolute;
+    background-color: white;
+    height: 15vh;
+    top: 0;
+    border-bottom: 1px solid gray 
+}
+.nav-items {
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0 25px;
+    width: 100%;
+}
+.adobeImgContent {
+    display: flex;
+    align-items: center;
+}
+.adobeImg {
+  height: 50%;
+}
+
+#firstSection {
+    color:white;
+    margin-top: 15vh;
+    background-image: url("https://www.licenciasadobe.com/Fondo-opción-2.jpg");
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+#firstSection div {
+    padding: 20px;
+}
+
+.formulario {
+    width: 100%;
+}
