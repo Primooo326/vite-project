@@ -8,6 +8,7 @@ import { Metaverso } from "./components/metaverso";
 import { Slider } from "./components/silder";
 import { ContactUs } from "./components/contactUs";
 import { Cymetria } from "./components/cymetria";
+import { Chatbot } from "./components/chatbot";
 import "./App.css";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
 			<Slider />
 			<ContactUs />
 			<Cymetria />
+			<Chatbot />
 		</>
 	);
 }

@@ -15,7 +15,7 @@ export function BasicCard() {
 				<input type="text" className=" mb-3 form-control" placeholder="empresa" />
 				<input type="tel" className=" mb-3 form-control" placeholder="telefono" />
 				<select className="form-select" aria-label="Default select example">
-					<option selected>Selecciona tipo de programa</option>
+					<option defaultValue={"Adobe Creative Cloud"}>Selecciona tipo de programa</option>
 					<option value="Adobe Creative Cloud">Adobe Creative Cloud</option>
 					<option value="Adobe Document Cloud">Adobe Document Cloud</option>
 					<option value="Adobe Substance 3D y Metaverso">Adobe Substance 3D y Metaverso</option>
