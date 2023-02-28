@@ -1,7 +1,8 @@
 import { Configuration, OpenAIApi } from "openai";
-
+import { message } from "../models/sys";
+import "../../";
 const configuration = new Configuration({
-	apiKey: "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",
+	apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 export let conversacion = `simula una asistente de soporte para adobe y ayudame:
@@ -32,7 +33,7 @@ Usuario:hola
 
 Asistente: Bienvenido de nuevo al soporte de Adobe. ¿En qué te puedo ayudar hoy?
 `;
-export default async function (req: any, res: any) {
+export default async function init(req: any, res?: any) {
 	if (!configuration.apiKey) {
 		res.status(500).json({
 			error: {
@@ -42,7 +43,7 @@ export default async function (req: any, res: any) {
 		return;
 	}
 
-	const animal = req.body.animal || "";
+	const animal = req.animal || "";
 	if (animal.trim().length === 0) {
 		res.status(400).json({
 			error: {
@@ -77,14 +78,33 @@ export default async function (req: any, res: any) {
 }
 
 function generatePrompt(animal: string) {
-	const capitalizedAnimal = animal[0].toUpperCase() + animal.slice(1).toLowerCase();
 	const sendResp = ` ${conversacion}
 Usuario: ${animal}
 Asistente:`;
-	setConversation(sendResp);
+	conversation(sendResp);
 	return sendResp;
 }
 
-export function setConversation(text: string) {
+export function conversation(text: string = "") {
 	conversacion = conversacion + text;
+	return conversacion;
+}
+export function generateChat() {
+	const array: message[] = [];
+	const messageList = conversacion.split("\n");
+	messageList.forEach((message) => {
+		if (message.includes("Asistente:")) {
+			array.push({ message, isAsistente: true });
+		} else {
+			array.push({ message, isAsistente: false });
+		}
+	});
+	return array.map((p) => {
+		if (p.message.includes("Asistente:")) {
+			p.message = p.message.replace("Asistente:", "");
+		} else {
+			p.message = p.message.replace("Usuario:", "");
+		}
+		return p;
+	});
 }
