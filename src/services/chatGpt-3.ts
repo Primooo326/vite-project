@@ -1,37 +1,18 @@
 import { Configuration, OpenAIApi } from "openai";
 import { message } from "../models/sys";
-import "../../";
 const configuration = new Configuration({
-	apiKey: process.env.OPENAI_API_KEY,
+	apiKey: "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",
 });
 const openai = new OpenAIApi(configuration);
 export let conversacion = `simula una asistente de soporte para adobe y ayudame:
 
 Asistente: Bienvenido al soporte de Adobe. ¿En qué te puedo ayudar hoy?
 Usuario:quisiera saber como puedo instalar adobe illustrator
-Asistente: Estoy aquí para ayudar. Por favor, dígame si estás usando Windows o Mac para instalar Adobe Illustrator.
-Usuario:estoy usando windows 
-Asistente: Excelente. Para instalar Adobe Illustrator en Windows, primero debe descargar el instalador de Adobe. Puede hacerlo desde la página de descargas de Adobe. Una vez que la descarga esté completa, siga los pasos de la instalación para completar la instalación.
-Usuario:Muchas gracias
-Asistente: De nada. ¿Hay algo más en lo que pueda ayudarte hoy?
-Usuario:No, eso es todo 
-Asistente: ¡Genial! Si necesita ayuda adicional, no dude en contactarnos de nuevo. ¡Gracias por contactarnos hoy!
-Usuario:hola
-Asistente: Bienvenido al soporte de Adobe. ¿En qué te puedo ayudar hoy?
-Usuario:El instalador me genera errores
-
-Asistente: Entiendo. Estoy aquí para ayudar. Por favor, dígame qué tipo de errores está recibiendo exactamente para que podamos ayudarlo mejor.
-Usuario:me dice que error de instalacion, no encontro el instalador
-
-Asistente: Entiendo. A veces, las descargas se pueden interrumpir antes de completarse. Por favor, intente descargar de nuevo el instalador desde la página de descargas de Adobe. Si todavía recibe el mismo error, contáctenos de nuevo para obtener una asistencia adicional.
-Usuario:gracias
-
-Asistente: De nada. ¿Hay algo más en lo que pueda ayudarte hoy?
-Usuario:no 
-Asistente: ¡Genial! Si necesita ayuda adicional, no dude en contactarnos de nuevo. ¡Gracias por contactarnos hoy!
-Usuario:hola
-
-Asistente: Bienvenido de nuevo al soporte de Adobe. ¿En qué te puedo ayudar hoy?
+Asistente: Por supuesto. Para instalar Adobe Illustrator, primero debe descargar el programa desde la página web de Adobe. Una vez descargado, siga las instrucciones de la pantalla para completar la instalación. Si tiene alguna pregunta durante el proceso, no dude en contactarnos. ¿Hay algo más en lo que pueda ayudarte?
+Usuario:no, creo que eso es todo, gracias
+Asistente: ¡De nada! Si necesitas ayuda adicional con Adobe Illustrator, no dudes en contactarnos. ¡Que tengas un buen día!
+Usuario:Hola
+Asistente:Bienvenido al soporte de Adobe. ¿En qué te puedo ayudar hoy?
 `;
 export default async function init(req: any, res?: any) {
 	if (!configuration.apiKey) {
@@ -60,7 +41,8 @@ export default async function init(req: any, res?: any) {
 			temperature: 0.7,
 			max_tokens: 2000,
 		});
-		res.status(200).json({ result: completion.data.choices[0].text });
+		conversation(completion.data.choices[0].text);
+		return { result: completion.data.choices[0].text };
 	} catch (error: any) {
 		// Consider adjusting the error handling logic for your use case
 		if (error.response) {
@@ -78,7 +60,7 @@ export default async function init(req: any, res?: any) {
 }
 
 function generatePrompt(animal: string) {
-	const sendResp = ` ${conversacion}
+	const sendResp = `
 Usuario: ${animal}
 Asistente:`;
 	conversation(sendResp);
@@ -86,11 +68,12 @@ Asistente:`;
 }
 
 export function conversation(text: string = "") {
-	conversacion = conversacion + text;
+	console.log(text);
+	conversacion = `${conversacion}${text}`;
 	return conversacion;
 }
 export function generateChat() {
-	const array: message[] = [];
+	let array: message[] = [];
 	const messageList = conversacion.split("\n");
 	messageList.forEach((message) => {
 		if (message.includes("Asistente:")) {
@@ -99,12 +82,21 @@ export function generateChat() {
 			array.push({ message, isAsistente: false });
 		}
 	});
-	return array.map((p) => {
+	array = array.map((p) => {
 		if (p.message.includes("Asistente:")) {
 			p.message = p.message.replace("Asistente:", "");
 		} else {
 			p.message = p.message.replace("Usuario:", "");
 		}
 		return p;
+	});
+	array = array.filter((p) => {
+		return p.message.length > 0;
+	});
+	return array.filter((a, index) => {
+		if (index >= 7) {
+			console.log(a);
+			return a;
+		}
 	});
 }

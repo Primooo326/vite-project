@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { generateChat } from "../services/chatGpt-3";
 import init from "../services/chatGpt-3";
 import { message } from "../models/sys";
+import load from "../assets/loading.png";
 // let [text, setText] = useState("");
 // const [result, setResult] = useState("");
 
@@ -34,7 +35,6 @@ import { message } from "../models/sys";
 // }
 
 function Message(props: any) {
-	console.log(props);
 	return (
 		<div id="message" className={props.bot === true ? "messageBot" : "messageUser"}>
 			<p>{props.message}</p>
@@ -45,9 +45,10 @@ function Message(props: any) {
 export function Chatbot() {
 	const [chat, setChat] = useState(false);
 	const [userMessage, setUserMessage] = useState<message[]>([]);
-
+	let [showLoad, setShowLoad] = useState(false);
 	useEffect(() => {
 		setUserMessage(generateChat());
+		console.log(userMessage.length);
 	}, []);
 
 	if (chat) {
@@ -56,11 +57,12 @@ export function Chatbot() {
 				<div className="chat-header">
 					<img src={botci} alt="botsito" />
 					<h3>soporte</h3>
-					<div>
+					{/* rome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+					<div role="button" onClick={() => setChat(!chat)}>
 						<i className="fi fi-br-cross" />
 					</div>
 				</div>
-				<div className="chat-body">
+				<div className="chat-body" id="chat-body">
 					{userMessage.map((msm) => {
 						return <Message message={msm.message} bot={msm.isAsistente} />;
 					})}
@@ -68,14 +70,22 @@ export function Chatbot() {
 				<div className="chat-footer">
 					<textarea name="" id="inputTextarea" cols={3} rows={2} />
 					<Button
-						onClick={() => {
+						onClick={async () => {
 							const currentMessage: any = document.getElementById("inputTextarea");
-							init({ animal: currentMessage.value });
-							console.log(currentMessage.value);
+							setShowLoad(true);
+							await init({ animal: currentMessage.value }).then(() => {
+								setUserMessage(generateChat());
+								setShowLoad(false);
+							});
+							currentMessage.value = "";
+							setTimeout(() => {
+								scroll();
+							}, 100);
 						}}
 						variant="contained"
 					>
-						<i className="fi fi-br-paper-plane" />
+						<i hidden={showLoad} className="fi fi-br-paper-plane" />
+						<img hidden={!showLoad} src={load} alt="loader" id="loaderImg" />
 					</Button>
 				</div>
 			</div>
@@ -89,4 +99,9 @@ export function Chatbot() {
 			</div>
 		);
 	}
+}
+function scroll() {
+	const chatBody = document.getElementById("chat-body") as HTMLDivElement;
+	chatBody.scrollTop = chatBody.scrollHeight;
+	console.log(chatBody.scrollHeight);
 }
