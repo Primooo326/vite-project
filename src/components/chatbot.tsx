@@ -5,34 +5,6 @@ import { generateChat } from "../services/chatGpt-3";
 import init from "../services/chatGpt-3";
 import { message } from "../models/sys";
 import load from "../assets/loading.png";
-// let [text, setText] = useState("");
-// const [result, setResult] = useState("");
-
-// async function onSubmit(event: any) {
-// 	event.preventDefault();
-// 	try {
-// 		const response = await fetch("../services/chatGpt-3.ts", {
-// 			method: "POST",
-// 			headers: {
-// 				"Content-Type": "application/json",
-// 			},
-// 			body: JSON.stringify({ animal: text }),
-// 		});
-
-// 		const data = await response.json();
-// 		if (response.status !== 200) {
-// 			throw data.error || new Error(`Request failed with status ${response.status}`);
-// 		}
-// 		console.log(data.result);
-// 		setConversation(data.result);
-// 		setResult(data.result);
-// 		setText("");
-// 	} catch (error: any) {
-// 		// Consider implementing your own error handling logic here
-// 		console.error(error);
-// 		alert(error.message);
-// 	}
-// }
 
 function Message(props: any) {
 	return (
@@ -70,13 +42,14 @@ export function Chatbot() {
 				<div className="chat-footer">
 					<textarea name="" id="inputTextarea" cols={3} rows={2} />
 					<Button
+						disabled={false}
 						onClick={async () => {
 							const currentMessage: any = document.getElementById("inputTextarea");
 							setShowLoad(true);
 							await init({ animal: currentMessage.value }).then(() => {
 								setUserMessage(generateChat());
-								setShowLoad(false);
 							});
+							setShowLoad(false);
 							currentMessage.value = "";
 							setTimeout(() => {
 								scroll();
@@ -95,7 +68,7 @@ export function Chatbot() {
 			// rome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
 			<div role="button" onClick={() => setChat(!chat)} id="chatbot">
 				<img src={botci} alt="botsito" />
-				<h1>botsito</h1>
+				<h4>IAssitant</h4>
 			</div>
 		);
 	}
@@ -104,4 +77,11 @@ function scroll() {
 	const chatBody = document.getElementById("chat-body") as HTMLDivElement;
 	chatBody.scrollTop = chatBody.scrollHeight;
 	console.log(chatBody.scrollHeight);
+}
+
+function validateForm(): boolean {
+	const form = document.getElementById("inputTextarea") as HTMLTextAreaElement;
+	if (form.value.length === 0) {
+		return false;
+	} else return true;
 }

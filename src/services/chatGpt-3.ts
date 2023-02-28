@@ -1,7 +1,7 @@
 import { Configuration, OpenAIApi } from "openai";
 import { message } from "../models/sys";
 const configuration = new Configuration({
-	apiKey: "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",
+	apiKey: "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",
 });
 const openai = new OpenAIApi(configuration);
 export let conversacion = `simula una asistente de soporte para adobe y ayudame:
